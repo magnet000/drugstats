@@ -1,0 +1,136 @@
+---
+title: "Anàlisi descriptiu tràfic de drogues a España"
+author: "Iman El Kabiri Ouarqui"
+date: "5/12/2020"
+output:
+  pdf_document:
+    keep_tex: yes
+---
+# Gràfic evolució del total de detencions per tràfic de drogues
+
+Producció pròpia a partir de dades: Ministeri de l'interior
+
+```{r}
+Detys <- readxl::read_excel("./STATSdrogues.xlsx", sheet = "Detencions-any") 
+```
+
+```{r message=FALSE}
+
+library(tidyverse)
+ggplot(Detys) +
+ aes(x = Año, y = TotalDet) +
+ geom_line(size = 1.28, colour = "#737373") +
+ labs(x = "\nAny", y = "\nTotal de detencions\n", title = "\nEvolució de les detencions per tràfic de drogues a España\n") +
+ theme_minimal() +
+  scale_x_continuous("\nAny", labels = as.character(Detys$Año), breaks = Detys$Año) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+# Gràfic total drogues decomisades desglosat per families de droga pel 2019
+
+Producció pròpia a partir de dades: Ministeri de l'interior
+
+```{r}
+Dectip <- readxl::read_excel("./STATSdrogues.xlsx", sheet = "Incautacions-tipus") 
+```
+
+```{r message=FALSE, fig.height=6}
+Dectip2 <- Dectip %>% 
+  arrange(desc(Total)) %>% 
+  mutate(name=factor(Tipus, levels=Tipus))
+
+ggplot(Dectip2) +
+ aes(x = name, y = Total) +
+ geom_bar(fill = "#737373", stat="identity") +
+ theme_minimal() +
+  labs(x = "\nFamilia drogues", y = "\nTotal de decomissos\n", title = "\nTotal de decomissos per familia de drogues al 2019 (tant per cent \n respecte el total de decomissos)\n") +
+  geom_text(aes(label=paste0(round(Total/sum(Total)*100, 2), "%")), position=position_dodge(width=0.9), vjust=-0.5) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+```
+
+# Gràfiques de representació de la població penitenciària segons tipus de delicte i regió
+
+```{r}
+penit <- readxl::read_excel("./STATSdrogues.xlsx", sheet = "Penit") 
+```
+
+```{r fig.width=9}
+penit2 <-  penit %>% 
+  arrange(desc(`Total Catalunya`)) %>% 
+  mutate(name=factor(Tipologia, levels=Tipologia))
+
+penit3 <- penit2[1:5, c("name","Total Catalunya")]
+
+ggplot(penit3) +
+ aes(x = name, y = `Total Catalunya`) +
+ geom_bar(fill = "#737373", stat="identity", width = 0.7) +
+ labs(x = "\nTipologia delictiva", y = "Total població", title = "\nTotal població penitenciàra per tipologia delictiva a Catalunya el 2019\n", subtitle = "Dades referents als 5 primers delictes més freqüents") +
+ theme_minimal() +
+  coord_flip() + scale_x_discrete(limits = rev(penit3$name)) +
+  geom_text(aes(label=paste0(round(`Total Catalunya`/sum(penit2$`Total Catalunya`)*100, 2), "%")), position=position_dodge(width=0.7), hjust=1,
+            inherit.aes = TRUE,
+            size = 4)+
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+
+```{r fig.width=9}
+penit4 <-  penit %>% 
+  arrange(desc(`Total España`)) %>% 
+  mutate(name=factor(Tipologia, levels=Tipologia))
+
+penit5 <- penit4[1:5, c("name","Total España")]
+
+ggplot(penit5) +
+ aes(x = name, y = `Total España`) +
+ geom_bar(fill = "#737373", stat="identity", width = 0.7) +
+ labs(x = "\nTipologia delictiva", y = "Total població", title = "\nTotal població penitenciàra per tipologia delictiva a España el 2019\n", subtitle = "Dades referents als 5 primers delictes més freqüents") +
+ theme_minimal() +
+  coord_flip() + scale_x_discrete(limits = rev(penit5$name)) +
+  geom_text(aes(label=paste0(round(`Total España`/sum(`Total España`)*100, 2), "%")), position=position_dodge(width=0.9),hjust=1)+
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+
+# Gràfic sobre la reincidència any, estudi 2004
+
+Producció pròpia a partir de dades: Reina, M. E. L., & Puig, M. F. (2004). *La reincidència penitenciària a Catalunya*. 169.
+
+```{r}
+reinc <- readxl::read_excel("./STATSdrogues.xlsx", sheet = "Reincidència")
+```
+
+```{r}
+reinc$`Total delicte` <- NULL
+reinc <- reinc[-5,]
+```
+
+
+```{r fig.width=9}
+reinc2 <-  reinc %>% 
+  arrange(desc(`Reincidència`)) %>% 
+  mutate(name=factor(`Tipologia delictiva`, levels=`Tipologia delictiva`))
+
+ggplot(reinc2) +
+ aes(x = name, y = `Reincidència`) +
+ geom_bar(fill = "#737373", stat="identity", width = 0.7) +
+ labs(x = "\nTipologia delictiva\n", y = "Total reincidència\n", title = "\nTotal població reincident per tipologia delictiva a Cataluña 2004\n") +
+ theme_minimal() +
+  coord_flip() + scale_x_discrete(limits = rev(reinc2$name)) +
+  geom_text(aes(label=paste0(round(`Reincidència`/sum(`Reincidència`)*100, 2), "%")), position=position_dodge(width=0.9),hjust=0.4)+
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+
+
+
+
+
