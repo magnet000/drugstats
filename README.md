@@ -9,3 +9,8 @@ A més, constaran els següents documents en aquest repositori:
 
 Per a més informació sobre les dades del Ministeri del Interior, consultar el següent enllaç a la instància `Seguridad ciudadana` i `Instituciones penitenciarias`: [Dades sobre el tràfic de Drogues a Espanya](http://www.interior.gob.es/web/archivos-y-documentacion/398)
 
+Per instertar alguna cosa de codi (no s'executa):
+
+```
+x + x 
+```
